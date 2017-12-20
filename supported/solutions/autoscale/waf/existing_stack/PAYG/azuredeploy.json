@@ -459,7 +459,7 @@
         "resourceGroupName": "[resourceGroup().name]", 
         "singleQuote": "'", 
         "f5CloudLibsTag": "v3.5.1", 
-        "f5CloudLibsAzureTag": "v1.4.0", 
+        "f5CloudLibsAzureTag": "develop", 
         "f5NetworksTag": "v4.3.0.0", 
         "f5CloudIappsTag": "v1.2.1", 
         "f5NetworksSolutionScripts": "[concat('https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates/', variables('f5NetworksTag'), '/supported/solutions/autoscale/waf/deploy_scripts/')]", 

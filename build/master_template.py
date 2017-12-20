@@ -42,7 +42,7 @@ route_add_cmd = ""
 content_version = '4.3.0.0'
 f5_networks_tag = 'v4.3.0.0'
 f5_cloud_libs_tag = 'v3.5.1'
-f5_cloud_libs_azure_tag = 'v1.4.0'
+f5_cloud_libs_azure_tag = 'develop'
 f5_cloud_iapps_tag = 'v1.2.1'
 f5_cloud_workers_tag = 'v1.0.0'
 # Set BIG-IP versions to allow
