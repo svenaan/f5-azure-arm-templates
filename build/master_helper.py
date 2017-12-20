@@ -165,6 +165,7 @@ def variable_initialize(data):
     data['variables']['intSubnetPrivateAddressSuffix2'] = "OPTIONAL"
     data['variables']['intSubnetPrivateAddressSuffix3'] = "OPTIONAL"
     data['variables']['internalLoadBalancerAddress'] = "OPTIONAL"
+    data['variables']['mgmtSubnetRef'] = "OPTIONAL"
     data['variables']['extSubnetRef'] = "OPTIONAL"
     data['variables']['intSubnetRef'] = "OPTIONAL"
     data['variables']['addtlNicFillerArray'] = "OPTIONAL"

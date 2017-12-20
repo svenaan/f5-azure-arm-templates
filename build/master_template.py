@@ -331,6 +331,8 @@ if template_name in ('standalone_1nic', 'standalone_2nic', 'standalone_3nic', 's
         data['variables']['vnetAddressPrefix'] = "[concat(parameters('vnetAddressPrefix'),'.0.0/16')]"
         data['variables']['mgmtSubnetPrefix'] = "[concat(parameters('vnetAddressPrefix'), '.1.0/24')]"
         data['variables']['mgmtSubnetPrivateAddress'] = "[concat(parameters('vnetAddressPrefix'), '.1.4')]"
+        if template_name in ('standalone_1nic'):
+            data['variables']['mgmtRouteGw'] = "[concat(parameters('vnetAddressPrefix'), '.1.1')]"
         if template_name in ('cluster_1nic'):
             data['variables']['mgmtSubnetPrivateAddress'] = "[concat(parameters('vnetAddressPrefix'), '.1.')]"
             data['variables']['mgmtSubnetPrivateAddressSuffix'] = 4
@@ -374,6 +376,8 @@ if template_name in ('standalone_1nic', 'standalone_2nic', 'standalone_3nic', 's
         data['variables']['vnetId'] = "[resourceId(parameters('vnetResourceGroupName'),'Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]"
         data['variables']['mgmtSubnetName'] = "[parameters('mgmtSubnetName')]"
         data['variables']['mgmtSubnetPrivateAddress'] = "[parameters('mgmtIpAddress')]"
+        if template_name in ('standalone_1nic'):
+            data['variables']['mgmtSubnetRef'] = "[concat('/subscriptions/', variables('subscriptionID'), '/resourceGroups/', parameters('vnetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('mgmtSubnetName'))]"
         if template_name in ('standalone_1nic', 'standalone_2nic', 'standalone_3nic', 'standalone_n-nic'):
             data['variables']['newAvailabilitySetName'] = "[concat(variables('dnsLabel'), '-avset')]"
             data['variables']['availabilitySetName'] = "[replace(parameters('avSetChoice'), 'CREATE_NEW', variables('newAvailabilitySetName'))]"
@@ -696,7 +700,7 @@ if template_name in ('ha-avset', 'cluster_3nic'):
 command_to_execute = ''; command_to_execute2 = ''; route_add_cmd = ''; default_gw_cmd = "variables('tmmRouteGw')"
 
 if template_name in ('standalone_1nic'):
-    command_to_execute = "[concat(<MTU_CMD><BASE_CMD_TO_EXECUTE>, variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '.', resourceGroup().location, '.cloudapp.azure.com'), <LICENSE1_COMMAND> ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048<ANALYTICS_CMD> --module ltm:nominal --module afm:none'<POST_CMD_TO_EXECUTE>)]"
+    command_to_execute = "[concat(<MTU_CMD><BASE_CMD_TO_EXECUTE>, variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '.', resourceGroup().location, '.cloudapp.azure.com'), <LICENSE1_COMMAND> ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048<ANALYTICS_CMD> --module ltm:nominal --module afm:none'<MTU_POST_CMD><POST_CMD_TO_EXECUTE>)]"
 if template_name in ('standalone_2nic'):
     command_to_execute = "[concat(<BASE_CMD_TO_EXECUTE>, variables('mgmtSubnetPrivateAddress'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '.', resourceGroup().location, '.cloudapp.azure.com'), <LICENSE1_COMMAND> ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048<ANALYTICS_CMD> --module ltm:nominal --module afm:none; /usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', <DFL_GW_CMD>, ' --vlan name:external,nic:1.1 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'), <EXT_MASK_CMD> ',vlan:external --log-level debug'<POST_CMD_TO_EXECUTE>)]"
 if template_name in ('standalone_3nic'):
@@ -745,8 +749,12 @@ command_to_execute2 = command_to_execute2.replace('<BIGIQ_PWD_CMD>', big_iq_pwd_
 
 # Change MTU to 1400 for 1 NIC
 mtu_cmd = "'tmsh modify sys global-settings mgmt-dhcp disabled; tmsh modify net vlan internal mtu 1400; ', "
-command_to_execute = command_to_execute.replace('<MTU_CMD>', mtu_cmd)
-command_to_execute2 = command_to_execute2.replace('<MTU_CMD>', mtu_cmd)
+if stack_type in ('existing_stack', 'prod_stack'):
+    mtu_post_cmd = "'/usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', concat(take(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, add(lastIndexOf(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.'), 1)), add(int(take(split(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.')[3], indexOf(split(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.')[3], '/'))), 1)), ' --self-ip name:self_1nic,address:', variables('mgmtSubnetPrivateAddress'), skip(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, indexOf(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '/')), ',vlan:internal --log-level debug'"
+else:
+    mtu_post_cmd = "'/usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('mgmtRouteGw'), ' --self-ip name:self_1nic,address:', variables('mgmtSubnetPrivateAddress'),  ',vlan:internal --log-level debug'"
+command_to_execute = command_to_execute.replace('<MTU_CMD>', mtu_cmd).replace('<MTU_POST_CMD>', mtu_post_cmd)
+command_to_execute2 = command_to_execute2.replace('<MTU_CMD>', mtu_cmd).replace('<MTU_POST_CMD>', mtu_post_cmd)
 
 # Add Usage Analytics Hash and Metrics Command
 metrics_hash_to_exec = "', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, ';"
