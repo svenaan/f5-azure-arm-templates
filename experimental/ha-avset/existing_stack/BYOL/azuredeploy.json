@@ -1038,6 +1038,7 @@
         }, 
         {
             "apiVersion": "[variables('storageApiVersion')]", 
+            "kind": "Storage", 
             "location": "[variables('location')]", 
             "name": "[variables('newDataStorageAccountName')]", 
             "sku": {
@@ -1055,6 +1056,7 @@
         }, 
         {
             "apiVersion": "[variables('storageApiVersion')]", 
+            "kind": "Storage", 
             "location": "[variables('location')]", 
             "name": "[variables('newStorageAccountName1')]", 
             "sku": {

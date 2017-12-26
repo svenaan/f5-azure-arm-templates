@@ -670,9 +670,9 @@ if template_name in ('standalone_1nic', 'standalone_2nic', 'standalone_3nic', 's
 
 ###### Storage Account Resource(s) ######
 resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "kind": "Storage", "location": location, "name": "[variables('newStorageAccountName0')]", "tags": tags, "sku": { "name": "[variables('storageAccountType')]", "tier": "[variables('storageAccountTier')]" } }]
-resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newDataStorageAccountName')]", "tags": tags, "sku": { "name": "[variables('dataStorageAccountType')]", "tier": "Standard" } }]
+resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "kind": "Storage", "location": location, "name": "[variables('newDataStorageAccountName')]", "tags": tags, "sku": { "name": "[variables('dataStorageAccountType')]", "tier": "Standard" } }]
 if template_name in ('ha-avset', 'cluster_1nic', 'cluster_3nic'):
-    resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newStorageAccountName1')]", "tags": tags, "sku": { "name": "[variables('storageAccountType')]", "tier": "[variables('storageAccountTier')]" } }]
+    resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "kind": "Storage", "location": location, "name": "[variables('newStorageAccountName1')]", "tags": tags, "sku": { "name": "[variables('storageAccountType')]", "tier": "[variables('storageAccountTier')]" } }]
 
 ###### Compute/VM Resource(s) ######
 depends_on = "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName0'))]", "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]", "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]", "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'))]"
