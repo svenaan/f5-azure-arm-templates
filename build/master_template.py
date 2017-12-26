@@ -471,8 +471,8 @@ if template_name in ('cluster_1nic', 'cluster_3nic', 'ltm_autoscale', 'waf_autos
         data['variables']['frontEndIPConfigID'] = "[concat(variables('extLbId'),'/frontendIPConfigurations/loadBalancerFrontEnd')]"
     if template_name in ('ltm_autoscale', 'waf_autoscale'):
         data['variables']['mgmtSubnetPrivateAddress'] = "OPTIONAL"
-        data['variables']['computeApiVersion'] = "2016-04-30-preview"
-        data['variables']['networkApiVersion'] = "2016-06-01"
+        data['variables']['computeApiVersion'] = "2017-12-01"
+        data['variables']['networkApiVersion'] = "2017-11-01"
         data['variables']['bigIpMgmtPort'] = 8443
         data['variables']['vmssName'] = "[concat(parameters('dnsLabel'),'-vmss')]"
         data['variables']['vmssId'] = "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('vmssName'))]"
@@ -669,10 +669,10 @@ if template_name in ('standalone_1nic', 'standalone_2nic', 'standalone_3nic', 's
     resources_list += [avset]
 
 ###### Storage Account Resource(s) ######
-resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newStorageAccountName0')]", "tags": tags, "properties": { "accountType": "[variables('storageAccountType')]" } }]
-resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newDataStorageAccountName')]", "tags": tags, "properties": { "accountType": "[variables('dataStorageAccountType')]" } }]
+resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "kind": "Storage", "location": location, "name": "[variables('newStorageAccountName0')]", "tags": tags, "sku": { "name": "[variables('storageAccountType')]", "tier": "[variables('storageAccountTier')]" } }]
+resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newDataStorageAccountName')]", "tags": tags, "sku": { "name": "[variables('dataStorageAccountType')]", "tier": "Standard" } }]
 if template_name in ('ha-avset', 'cluster_1nic', 'cluster_3nic'):
-    resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newStorageAccountName1')]", "tags": tags, "properties": { "accountType": "[variables('storageAccountType')]" } }]
+    resources_list += [{ "type": "Microsoft.Storage/storageAccounts", "apiVersion": storage_api_version, "location": location, "name": "[variables('newStorageAccountName1')]", "tags": tags, "sku": { "name": "[variables('storageAccountType')]", "tier": "[variables('storageAccountTier')]" } }]
 
 ###### Compute/VM Resource(s) ######
 depends_on = "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName0'))]", "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]", "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]", "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'))]"
