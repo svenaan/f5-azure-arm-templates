@@ -439,16 +439,16 @@
         "computeApiVersion": "2017-12-01", 
         "networkApiVersion": "2017-11-01", 
         "storageApiVersion": "2017-10-01", 
-        "insightsApiVersion": "2015-04-01", 
-        "appInsightsApiVersion": "2015-05-01", 
+        "appInsightsApiVersion": "2015-04-01", 
+        "appInsightsComponentsApiVersion": "2015-05-01", 
         "location": "[resourceGroup().location]", 
         "defaultAppInsightsLocation": "eastus", 
         "appInsightsLocation": "[split(concat(parameters('appInsights'), ':', variables('defaultAppInsightsLocation')), ':')[1]]", 
         "subscriptionID": "[subscription().subscriptionId]", 
         "resourceGroupName": "[resourceGroup().name]", 
         "singleQuote": "'", 
-        "f5CloudLibsTag": "v3.5.1", 
-        "f5CloudLibsAzureTag": "develop", 
+        "f5CloudLibsTag": "release-3.6.0", 
+        "f5CloudLibsAzureTag": "release-1.5.0", 
         "f5NetworksTag": "v4.3.0.0", 
         "f5CloudIappsTag": "v1.2.1", 
         "f5NetworksSolutionScripts": "[concat('https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates/', variables('f5NetworksTag'), '/experimental/solutions/autoscale/waf/deploy_scripts/')]", 
@@ -817,7 +817,7 @@
                             "destinationPortRange": "[variables('bigIpMgmtPort')]", 
                             "direction": "Inbound", 
                             "priority": 101, 
-                            "protocol": "TCP", 
+                            "protocol": "Tcp", 
                             "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]", 
                             "sourcePortRange": "*"
                         }
@@ -831,7 +831,7 @@
                             "destinationPortRange": "22", 
                             "direction": "Inbound", 
                             "priority": 102, 
-                            "protocol": "TCP", 
+                            "protocol": "Tcp", 
                             "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]", 
                             "sourcePortRange": "*"
                         }
@@ -845,7 +845,7 @@
                             "destinationPortRange": "[variables('httpBackendPort')]", 
                             "direction": "Inbound", 
                             "priority": 110, 
-                            "protocol": "TCP", 
+                            "protocol": "Tcp", 
                             "sourceAddressPrefix": "*", 
                             "sourcePortRange": "*"
                         }
@@ -859,7 +859,7 @@
                             "destinationPortRange": "[variables('httpsBackendPort')]", 
                             "direction": "Inbound", 
                             "priority": 111, 
-                            "protocol": "TCP", 
+                            "protocol": "Tcp", 
                             "sourceAddressPrefix": "*", 
                             "sourcePortRange": "*"
                         }
@@ -908,7 +908,7 @@
                             }, 
                             "frontendPortRangeEnd": 50100, 
                             "frontendPortRangeStart": 50001, 
-                            "protocol": "tcp"
+                            "protocol": "Tcp"
                         }
                     }, 
                     {
@@ -920,7 +920,7 @@
                             }, 
                             "frontendPortRangeEnd": 50200, 
                             "frontendPortRangeStart": 50101, 
-                            "protocol": "tcp"
+                            "protocol": "Tcp"
                         }
                     }
                 ], 
@@ -1042,7 +1042,7 @@
                 "publisher": "f5-networks"
             }, 
             "properties": {
-                "overprovision": "false", 
+                "overprovision": false, 
                 "upgradePolicy": {
                     "mode": "Manual"
                 }, 
@@ -1053,7 +1053,7 @@
                                 "name": "main", 
                                 "properties": {
                                     "protectedSettings": {
-                                        "commandToExecute": "[concat('mkdir -p /config/cloud/azure/node_modules; cp asm-policy.tar.gz deploy_waf.sh *.tmpl /config/cloud;AZURE_CREDENTIALS_FILE=/config/cloud/.azCredentials; TMP_DIR=/mnt/creds; TMP_CREDENTIALS_FILE=$TMP_DIR/.passwd; BIG_IP_CREDENTIALS_FILE=/config/cloud/.passwd; /usr/bin/install -m 400 /dev/null $AZURE_CREDENTIALS_FILE; /usr/bin/install -m 400 /dev/null $BIG_IP_CREDENTIALS_FILE; echo ', variables('singleQuote'), '{\"clientId\": \"', parameters('clientId'), '\", \"tenantId\": \"', parameters('tenantId'), '\", \"secret\": \"', parameters('servicePrincipalSecret'), '\", \"subscriptionId\": \"', variables('subscriptionID'), '\", \"storageAccount\": \"', variables('newDataStorageAccountName'), '\", \"storageKey\": \"', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('newDataStorageAccountName')), variables('storageApiVersion')).keys[0].value, '\", \"resourceGroupName\": \"', variables('resourceGroupName'), '\", \"loadBalancerName\": \"', variables('externalLoadBalancerName'), '\", \"appInsightsName\": \"', variables('appInsightsName'), '\", \"appInsightsId\": \"', reference(resourceId(variables('appInsightsNameArray')[1], 'Microsoft.Insights/components', variables('appInsightsNameArray')[0]), variables('appInsightsApiVersion')).AppId, '\"}', variables('singleQuote'), ' > $AZURE_CREDENTIALS_FILE; cp f5-cloud-libs*.tar.gz* /config/cloud; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; echo -e ', variables('verifyHash'), ' >> /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; bash /config/installCloudLibs.sh; . /config/cloud/azure/node_modules/f5-cloud-libs/scripts/util.sh; create_temp_dir $TMP_DIR; echo ', variables('singleQuote'), parameters('adminPassword'), variables('singleQuote'), '|sha512sum|cut -d \" \" -f 1|tr -d \"\n\" > $TMP_CREDENTIALS_FILE; bash /config/cloud/azure/node_modules/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file $TMP_CREDENTIALS_FILE; f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/encryptDataToFile.js --data-file $TMP_CREDENTIALS_FILE --out-file $BIG_IP_CREDENTIALS_FILE; wipe_temp_dir $TMP_DIR;', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, ';  bash /config/cloud/azure/node_modules/f5-cloud-libs/node_modules/f5-cloud-libs-azure/scripts/autoscale.sh --resourceGroup ', resourceGroup().name, ' --vmssName ', variables('vmssName'), ' --userName svc_user --password $BIG_IP_CREDENTIALS_FILE --azureSecretFile $AZURE_CREDENTIALS_FILE --managementPort ', variables('bigIpMgmtPort'), ' --ntpServer ', parameters('ntpServer'), ' --timeZone ', parameters('timeZone'), variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, ' --wafScriptArgs ', variables('singleQuote'), variables('commandArgs'), variables('singleQuote'), ' --appInsightsKey ', variables('singleQuote'), reference(resourceId(variables('appInsightsNameArray')[1], 'Microsoft.Insights/components', variables('appInsightsNameArray')[0]), variables('appInsightsApiVersion')).InstrumentationKey, variables('singleQuote'), '; if [[ $? == 0 ]]; then tmsh modify cm device-group Sync asm-sync enabled; tmsh load sys application template f5.service_discovery.tmpl; bash /config/customConfig.sh; else exit 1; fi')]"
+                                        "commandToExecute": "[concat('mkdir -p /config/cloud/azure/node_modules; cp asm-policy.tar.gz deploy_waf.sh *.tmpl /config/cloud;AZURE_CREDENTIALS_FILE=/config/cloud/.azCredentials; TMP_DIR=/mnt/creds; TMP_CREDENTIALS_FILE=$TMP_DIR/.passwd; BIG_IP_CREDENTIALS_FILE=/config/cloud/.passwd; /usr/bin/install -m 400 /dev/null $AZURE_CREDENTIALS_FILE; /usr/bin/install -m 400 /dev/null $BIG_IP_CREDENTIALS_FILE; echo ', variables('singleQuote'), '{\"clientId\": \"', parameters('clientId'), '\", \"tenantId\": \"', parameters('tenantId'), '\", \"secret\": \"', parameters('servicePrincipalSecret'), '\", \"subscriptionId\": \"', variables('subscriptionID'), '\", \"storageAccount\": \"', variables('newDataStorageAccountName'), '\", \"storageKey\": \"', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('newDataStorageAccountName')), variables('storageApiVersion')).keys[0].value, '\", \"resourceGroupName\": \"', variables('resourceGroupName'), '\", \"loadBalancerName\": \"', variables('externalLoadBalancerName'), '\", \"appInsightsName\": \"', variables('appInsightsName'), '\", \"appInsightsId\": \"', reference(resourceId(variables('appInsightsNameArray')[1], 'Microsoft.Insights/components', variables('appInsightsNameArray')[0]), variables('appInsightsComponentsApiVersion')).AppId, '\"}', variables('singleQuote'), ' > $AZURE_CREDENTIALS_FILE; cp f5-cloud-libs*.tar.gz* /config/cloud; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; echo -e ', variables('verifyHash'), ' >> /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; bash /config/installCloudLibs.sh; . /config/cloud/azure/node_modules/f5-cloud-libs/scripts/util.sh; create_temp_dir $TMP_DIR; echo ', variables('singleQuote'), parameters('adminPassword'), variables('singleQuote'), '|sha512sum|cut -d \" \" -f 1|tr -d \"\n\" > $TMP_CREDENTIALS_FILE; bash /config/cloud/azure/node_modules/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file $TMP_CREDENTIALS_FILE; f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/encryptDataToFile.js --data-file $TMP_CREDENTIALS_FILE --out-file $BIG_IP_CREDENTIALS_FILE; wipe_temp_dir $TMP_DIR;', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, ';  bash /config/cloud/azure/node_modules/f5-cloud-libs/node_modules/f5-cloud-libs-azure/scripts/autoscale.sh --resourceGroup ', resourceGroup().name, ' --vmssName ', variables('vmssName'), ' --userName svc_user --password $BIG_IP_CREDENTIALS_FILE --azureSecretFile $AZURE_CREDENTIALS_FILE --managementPort ', variables('bigIpMgmtPort'), ' --ntpServer ', parameters('ntpServer'), ' --timeZone ', parameters('timeZone'), variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, ' --wafScriptArgs ', variables('singleQuote'), variables('commandArgs'), variables('singleQuote'), ' --appInsightsKey ', variables('singleQuote'), reference(resourceId(variables('appInsightsNameArray')[1], 'Microsoft.Insights/components', variables('appInsightsNameArray')[0]), variables('appInsightsComponentsApiVersion')).InstrumentationKey, variables('singleQuote'), '; if [[ $? == 0 ]]; then tmsh modify cm device-group Sync asm-sync enabled; tmsh load sys application template f5.service_discovery.tmpl; bash /config/customConfig.sh; else exit 1; fi')]"
                                     }, 
                                     "publisher": "Microsoft.Azure.Extensions", 
                                     "settings": {
@@ -1147,7 +1147,7 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets"
         }, 
         {
-            "apiVersion": "[variables('insightsApiVersion')]", 
+            "apiVersion": "[variables('appInsightsApiVersion')]", 
             "dependsOn": [
                 "[variables('vmssId')]"
             ], 
@@ -1222,7 +1222,7 @@
             "type": "Microsoft.Insights/autoscaleSettings"
         }, 
         {
-            "apiVersion": "[variables('appInsightsApiVersion')]", 
+            "apiVersion": "[variables('appInsightsComponentsApiVersion')]", 
             "condition": "[contains(toUpper(parameters('appInsights')), 'CREATE_NEW')]", 
             "dependsOn": [], 
             "kind": "other", 
@@ -1239,7 +1239,7 @@
                 "group": "[parameters('tagValues').group]", 
                 "owner": "[parameters('tagValues').owner]"
             }, 
-            "type": "microsoft.insights/components"
+            "type": "Microsoft.Insights/components"
         }
     ], 
     "outputs": {
