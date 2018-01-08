@@ -1,6 +1,6 @@
 ## Script parameters being asked for below match to parameters in the azuredeploy.json file, otherwise pointing to the ##
-## azuredeploy.parameters.json file for values to use.  Some options below are mandatory, some(such as region) can     ##
-## be supplied inline when running this script but if they aren't then the default will be used as specificed below.   ##
+## azuredeploy.parameters.json file for values to use.  Some options below are mandatory, some (such as region) can     ##
+## be supplied inline when running this script but if they aren't then the default will be used as specified below.   ##
 <EXAMPLE_CMD>
 
 param(
