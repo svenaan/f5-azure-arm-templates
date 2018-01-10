@@ -598,6 +598,20 @@
                 "storageAccountType": "Premium_LRS"
             }
         }, 
+        "tagValues": "[parameters('tagValues')]", 
+        "pipTagValues": {
+            "copy": [
+                {
+                    "count": 20, 
+                    "input": {
+                        "f5_extSubnetId": "[variables('extSubnetId')]", 
+                        "f5_privateIp": "[concat(split(parameters('externalIpAddressRangeStart'), '.')[0], '.', split(parameters('externalIpAddressRangeStart'), '.')[1], '.', split(parameters('externalIpAddressRangeStart'), '.')[2], '.', add(int(split(parameters('externalIpAddressRangeStart'), '.')[3]), copyIndex('values', 1)))]", 
+                        "f5_tg": "traffic-group-1"
+                    }, 
+                    "name": "values"
+                }
+            ]
+        }, 
         "newStorageAccountName0": "[concat(uniqueString(variables('dnsLabel'), resourceGroup().id, deployment().name), 'stor0')]", 
         "newStorageAccountName1": "[concat(uniqueString(variables('dnsLabel'), resourceGroup().id, deployment().name), 'stor1')]", 
         "storageAccountType": "[variables('instanceTypeMap')[parameters('instanceType')].storageAccountType]", 
@@ -630,13 +644,7 @@
                 "idleTimeoutInMinutes": 30, 
                 "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/publicIPAddresses"
         }, 
         {
@@ -650,13 +658,7 @@
                 "idleTimeoutInMinutes": 30, 
                 "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/publicIPAddresses"
         }, 
         {
@@ -667,13 +669,7 @@
                 "idleTimeoutInMinutes": 30, 
                 "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/publicIPAddresses"
         }, 
         {
@@ -684,13 +680,7 @@
                 "idleTimeoutInMinutes": 30, 
                 "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/publicIPAddresses"
         }, 
         {
@@ -709,16 +699,7 @@
                 "idleTimeoutInMinutes": 30, 
                 "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "f5_extSubnetId": "[variables('extSubnetId')]", 
-                "f5_privateIp": "[concat(variables('extSubnetPrivateAddressPrefix'), add(variables('extSubnetPrivateAddressSuffixInt'), copyIndex(1)))]", 
-                "f5_tg": "traffic-group-1", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), union(json('{}'), variables('pipTagValues').values[copyIndex()]), union(variables('tagValues'), variables('pipTagValues').values[copyIndex()]))]", 
             "type": "Microsoft.Network/publicIPAddresses"
         }, 
         {
@@ -749,13 +730,7 @@
                     "id": "[variables('mgmtNsgId')]"
                 }
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkInterfaces"
         }, 
         {
@@ -786,13 +761,7 @@
                     "id": "[variables('mgmtNsgId')]"
                 }
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkInterfaces"
         }, 
         {
@@ -829,13 +798,7 @@
                     "id": "[concat(variables('extNsgId'))]"
                 }
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkInterfaces"
         }, 
         {
@@ -868,13 +831,7 @@
                     "id": "[concat(variables('extNsgId'))]"
                 }
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkInterfaces"
         }, 
         {
@@ -901,13 +858,7 @@
                 ], 
                 "primary": true
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkInterfaces"
         }, 
         {
@@ -934,13 +885,7 @@
                 ], 
                 "primary": true
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkInterfaces"
         }, 
         {
@@ -979,13 +924,7 @@
                     }
                 ]
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkSecurityGroups"
         }, 
         {
@@ -995,26 +934,14 @@
             "properties": {
                 "securityRules": []
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Network/networkSecurityGroups"
         }, 
         {
             "apiVersion": "[variables('apiVersion')]", 
             "location": "[variables('location')]", 
             "name": "[variables('availabilitySetName')]", 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Compute/availabilitySets"
         }, 
         {
@@ -1026,13 +953,7 @@
                 "name": "[variables('storageAccountType')]", 
                 "tier": "[variables('storageAccountTier')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Storage/storageAccounts"
         }, 
         {
@@ -1044,13 +965,7 @@
                 "name": "[variables('dataStorageAccountType')]", 
                 "tier": "Standard"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Storage/storageAccounts"
         }, 
         {
@@ -1062,13 +977,7 @@
                 "name": "[variables('storageAccountType')]", 
                 "tier": "[variables('storageAccountTier')]"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Storage/storageAccounts"
         }, 
         {
@@ -1145,13 +1054,7 @@
                     }
                 }
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Compute/virtualMachines"
         }, 
         {
@@ -1228,13 +1131,7 @@
                     }
                 }
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Compute/virtualMachines"
         }, 
         {
@@ -1260,13 +1157,7 @@
                 "type": "CustomScript", 
                 "typeHandlerVersion": "2.0"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Compute/virtualMachines/extensions"
         }, 
         {
@@ -1292,13 +1183,7 @@
                 "type": "CustomScript", 
                 "typeHandlerVersion": "2.0"
             }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]", 
             "type": "Microsoft.Compute/virtualMachines/extensions"
         }
     ], 

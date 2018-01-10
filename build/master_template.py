@@ -73,7 +73,8 @@ hashed_file_list = ""
 install_cloud_libs = install_cloud_libs.replace('<HASHED_FILE_LIST>', hashed_file_list)
 install_cloud_libs = install_cloud_libs.replace('<TAR_LIST>', additional_tar_list)
 instance_type_list = ["Standard_A2", "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_D2", "Standard_D3", "Standard_D4", "Standard_D11", "Standard_D12", "Standard_D13", "Standard_D14", "Standard_DS2", "Standard_DS3", "Standard_DS4", "Standard_DS11", "Standard_DS12", "Standard_DS13", "Standard_DS14", "Standard_D2_v2", "Standard_D3_v2", "Standard_D4_v2", "Standard_D5_v2", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2", "Standard_D14_v2", "Standard_D15_v2", "Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_DS11_v2", "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2", "Standard_F2", "Standard_F4", "Standard_F8", "Standard_F2S", "Standard_F4S", "Standard_F8S", "Standard_F16S", "Standard_G2", "Standard_G3", "Standard_G4", "Standard_G5", "Standard_GS2", "Standard_GS3", "Standard_GS4", "Standard_GS5"]
-tags = {"application": "[parameters('tagValues').application]", "environment": "[parameters('tagValues').environment]", "group": "[parameters('tagValues').group]", "owner": "[parameters('tagValues').owner]", "costCenter": "[parameters('tagValues').cost]"}
+tags = "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]"
+pip_tags = "[if(empty(variables('tagValues')), union(json('{}'), variables('pipTagValues').values[copyIndex()]), union(variables('tagValues'), variables('pipTagValues').values[copyIndex()]))]"
 tag_values = {"application":"APP", "environment":"ENV", "group":"GROUP", "owner":"OWNER", "cost":"COST"}
 api_version = "[variables('apiVersion')]"
 compute_api_version = "[variables('computeApiVersion')]"
@@ -462,6 +463,12 @@ if template_name in ('standalone_n-nic'):
     data['variables']['netCmd'] = "[variables(concat('netCmd0', parameters('numberOfAdditionalNics')))]"
     data['variables']['selfNicConfigArray'] = [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('mgmtNicName'))]", "properties": { "primary": True } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('extNicName'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('intNicName'))]", "properties": { "primary": False } }]
     data['variables']['addtlNicConfigArray'] = [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic1'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic2'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic3'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic4'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic5'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic6'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic7'))]", "properties": { "primary": False } }, { "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic8'))]", "properties": { "primary": False } }]
+if template_name in ('ha-avset'):
+    if stack_type == 'new_stack':
+        private_ip_value = "[concat(parameters('vnetAddressPrefix'), '.2.', copyIndex('values', 10))]"
+    elif stack_type in ('existing_stack', 'prod_stack'):
+        private_ip_value = "[concat(split(parameters('externalIpAddressRangeStart'), '.')[0], '.', split(parameters('externalIpAddressRangeStart'), '.')[1], '.', split(parameters('externalIpAddressRangeStart'), '.')[2], '.', add(int(split(parameters('externalIpAddressRangeStart'), '.')[3]), copyIndex('values', 1)))]"
+    data['variables']['pipTagValues'] = {"copy": [{"name": "values","count": 20,"input": {"f5_extSubnetId": "[variables('extSubnetId')]","f5_privateIp": private_ip_value,"f5_tg": "traffic-group-1"}}]}
 if template_name in ('cluster_1nic', 'cluster_3nic', 'ltm_autoscale', 'waf_autoscale'):
     data['variables']['externalLoadBalancerName'] = "[concat(variables('dnsLabel'),'-ext-alb')]"
     data['variables']['extLbId'] = "[resourceId('Microsoft.Network/loadBalancers',variables('externalLoadBalancerName'))]"
@@ -530,17 +537,11 @@ if stack_type in ('new_stack', 'existing_stack'):
         resources_list += [{ "type": "Microsoft.Network/publicIPAddresses", "apiVersion": network_api_version, "location": location, "name": "[concat(variables('extSelfPublicIpAddressNamePrefix'), '0')]", "tags": tags, "properties": { "idleTimeoutInMinutes": 30, "publicIPAllocationMethod": "[variables('publicIPAddressType')]" } }]
         if template_name in ('ha-avset', 'cluster_3nic'):
             resources_list += [{ "type": "Microsoft.Network/publicIPAddresses", "apiVersion": network_api_version, "location": location, "name": "[concat(variables('extSelfPublicIpAddressNamePrefix'), '1')]", "tags": tags, "properties": { "idleTimeoutInMinutes": 30, "publicIPAllocationMethod": "[variables('publicIPAddressType')]" } }]
-        # Add Traffic Public IP's - for external NIC
-        pip_tags = tags.copy()
+        pip_tags_to_use = tags
         if template_name in ('ha-avset'):
-            if stack_type == 'new_stack':
-                private_ip_value = "[concat(variables('extSubnetPrivateAddressPrefix'), copyIndex(10))]"
-            elif stack_type in ('existing_stack', 'prod_stack'):
-                private_ip_value = "[concat(variables('extSubnetPrivateAddressPrefix'), add(variables('extSubnetPrivateAddressSuffixInt'), copyIndex(1)))]"
-            pip_tags['f5_privateIp'] = private_ip_value
-            pip_tags['f5_extSubnetId'] = "[variables('extSubnetId')]"
-            pip_tags['f5_tg'] = "traffic-group-1"
-        resources_list += [{ "type": "Microsoft.Network/publicIPAddresses", "apiVersion": network_api_version, "condition": "[not(equals(variables('numberOfExternalIps'),0))]", "location": location, "name": "[concat(variables('extPublicIPAddressNamePrefix'), copyIndex())]", "copy": { "count": "[if(not(equals(variables('numberOfExternalIps'), 0)), variables('numberOfExternalIps'), 1)]", "name": "extpipcopy"}, "tags": pip_tags, "properties": { "dnsSettings": { "domainNameLabel": "[concat(variables('dnsLabel'), copyIndex(0))]" }, "idleTimeoutInMinutes": 30, "publicIPAllocationMethod": "[variables('publicIPAddressType')]" } }]
+            pip_tags_to_use = pip_tags
+        # Add Traffic Public IP's - for external NIC
+        resources_list += [{ "type": "Microsoft.Network/publicIPAddresses", "apiVersion": network_api_version, "condition": "[not(equals(variables('numberOfExternalIps'),0))]", "location": location, "name": "[concat(variables('extPublicIPAddressNamePrefix'), copyIndex())]", "copy": { "count": "[if(not(equals(variables('numberOfExternalIps'), 0)), variables('numberOfExternalIps'), 1)]", "name": "extpipcopy"}, "tags": pip_tags_to_use, "properties": { "dnsSettings": { "domainNameLabel": "[concat(variables('dnsLabel'), copyIndex(0))]" }, "idleTimeoutInMinutes": 30, "publicIPAllocationMethod": "[variables('publicIPAddressType')]" } }]
 
 ###### Virtual Network Resources(s) ######
 if template_name in ('standalone_1nic', 'cluster_1nic'):
