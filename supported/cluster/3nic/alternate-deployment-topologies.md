@@ -6,8 +6,8 @@ This page contains some alternate deployment topology diagrams for the F5 cluste
   - [Load balancing application traffic via redundant firewalls](#big-ip-ve-ha-pair-load-balancing-application-traffic-via-redundant-firewalls) 
   - [Load balancing a second application via redundant firewalls and scaled on destination port](#big-ip-ve-ha-pair-load-balancing-a-second-application-via-redundant-firewalls-and-scaled-on-destination-port) 
   - [Load balancing a second application scaled on destination address](#big-ip-ve-ha-pair-load-balancing-a-second-application-scaled-on-destination-address)
-  - [Load balancing East-West application traffic via redundant firewalls](##big-ip-ve-ha-pair-load-balancing-east-west-application-traffic-via-redundant-firewalls)
-  - [Load balancing reverse/forward proxy traffic via firewalls using an all-protocol Azure load balancer for forward proxy](##big-ip-ve-ha-pair-load-balancing-reverseforward-proxy-traffic-via-firewalls-using-an-all-protocol-azure-load-balancer-for-forward-proxy)
+  - [Load balancing East-West application traffic via redundant firewalls](#big-ip-ve-ha-pair-load-balancing-east-west-application-traffic-via-redundant-firewalls)
+  - [Load balancing reverse/forward proxy traffic via firewalls using an all-protocol Azure load balancer for forward proxy](#big-ip-ve-ha-pair-load-balancing-reverseforward-proxy-traffic-via-firewalls-using-an-all-protocol-azure-load-balancer-for-forward-proxy)
 
 
 
@@ -39,16 +39,16 @@ In this example, traffic for a second application is forwarded to an Azure Inter
 In this example, traffic between internal networks is load balanced first through redundant pair of firewalls and then an HA pair of BIG-IP VEs, with internal Azure load balancers deployed between each pair of devices.
 
 
-# After deployment, for this scenario you must perform the following post-deployment steps:
+After deployment, for this scenario you must perform the following post-deployment steps:
 
-#  - BIG-IP: Configure Failover Unicast Address and Primary Local Mirror Address on each device (the self IP on internal VLAN)  
-#  - BIG-IP: Create routes to internal subnets  
-#  - Delete the ALB created by the template  
-#  - Add secondary IP configurations to internal BIG-IP NICs  
-#  - Create and configure ILB1  
-#  - Create and configure ILB0 (optional)  
-#  - Create UDR (optional)  
-#  - BIG-IP: Create Virtual Server in traffic-group-1  
+  - BIG-IP: Configure Failover Unicast Address and Primary Local Mirror Address on each device (the self IP on internal VLAN)  
+  - BIG-IP: Create routes to internal subnets  
+  - Delete the ALB created by the template  
+  - Add secondary IP configurations to internal BIG-IP NICs  
+  - Create and configure ILB1  
+  - Create and configure ILB0 (optional)  
+  - Create UDR (optional)  
+  - BIG-IP: Create Virtual Server in traffic-group-1  
 
 ![Configuration Example alternate deployment 4](images/azure-cluster-3nic-alternate-diagram4.png)
 
