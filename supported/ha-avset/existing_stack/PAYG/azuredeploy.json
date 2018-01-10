@@ -603,7 +603,7 @@
                     "count": 20, 
                     "input": {
                         "f5_extSubnetId": "[variables('extSubnetId')]", 
-                        "f5_privateIp": "[concat(split(parameters('externalIpAddressRangeStart'), '.')[0], '.', split(parameters('externalIpAddressRangeStart'), '.')[1], '.', split(parameters('externalIpAddressRangeStart'), '.')[2], '.', add(int(split(parameters('externalIpAddressRangeStart'), '.')[3]), copyIndex('values', 1)))]", 
+                        "f5_privateIp": "[concat(split(parameters('externalIpAddressRangeStart'), '.')[0], '.', split(parameters('externalIpAddressRangeStart'), '.')[1], '.', split(parameters('externalIpAddressRangeStart'), '.')[2], '.', add(int(split(parameters('externalIpAddressRangeStart'), '.')[3]), copyIndex('values')))]", 
                         "f5_tg": "traffic-group-1"
                     }, 
                     "name": "values"
@@ -776,13 +776,13 @@
                     {
                         "count": "[add(variables('numberOfExternalIps'), 1)]", 
                         "input": {
-                            "name": "[if(equals(copyIndex('ipConfigurations', 1), 1), concat(variables('instanceName'), '-self-ipconfig'), concat(variables('resourceGroupName'), '-ext-ipconfig', sub(copyIndex('ipConfigurations', 1), 2)))]", 
+                            "name": "[if(equals(copyIndex('ipConfigurations'), 0), concat(variables('instanceName'), '-self-ipconfig'), concat(variables('resourceGroupName'), '-ext-ipconfig', sub(copyIndex('ipConfigurations'), 1)))]", 
                             "properties": {
                                 "PublicIpAddress": {
-                                    "Id": "[if(equals(copyIndex('ipConfigurations', 1), 1), concat(variables('extSelfPublicIpAddressIdPrefix'), '0'), concat(variables('extPublicIPAddressIdPrefix'), sub(copyIndex('ipConfigurations', 1), 2)))]"
+                                    "Id": "[if(equals(copyIndex('ipConfigurations'), 0), concat(variables('extSelfPublicIpAddressIdPrefix'), '0'), concat(variables('extPublicIPAddressIdPrefix'), sub(copyIndex('ipConfigurations', 1), 2)))]"
                                 }, 
-                                "primary": "[if(equals(copyIndex('ipConfigurations', 1), 1), 'True', 'False')]", 
-                                "privateIPAddress": "[if(equals(copyIndex('ipConfigurations', 1), 1), variables('extSubnetPrivateAddress'), concat(variables('extSubnetPrivateAddressPrefix'), add(variables('extSubnetPrivateAddressSuffixInt'), sub(copyIndex('ipConfigurations', 1), 1))))]", 
+                                "primary": "[if(equals(copyIndex('ipConfigurations'), 0), 'True', 'False')]", 
+                                "privateIPAddress": "[if(equals(copyIndex('ipConfigurations'), 0), variables('extSubnetPrivateAddress'), concat(variables('extSubnetPrivateAddressPrefix'), add(variables('extSubnetPrivateAddressSuffixInt'), sub(copyIndex('ipConfigurations'), 1))))]", 
                                 "privateIPAllocationMethod": "Static", 
                                 "subnet": {
                                     "id": "[variables('extSubnetId')]"
