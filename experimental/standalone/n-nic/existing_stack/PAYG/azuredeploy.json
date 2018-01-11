@@ -399,56 +399,20 @@
                 }
             }
         ], 
-        "addtlNicConfigArray": [
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic1'))]", 
-                "properties": {
-                    "primary": false
+        "addtlNicConfigArray": {
+            "copy": [
+                {
+                    "count": 8, 
+                    "input": {
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(toLower(parameters('instanceName')), '-addtlNic', copyIndex('values', 1)))]", 
+                        "properties": {
+                            "primary": false
+                        }
+                    }, 
+                    "name": "values"
                 }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic2'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic3'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic4'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic5'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic6'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic7'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }, 
-            {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('instanceName'), '-addtlNic8'))]", 
-                "properties": {
-                    "primary": false
-                }
-            }
-        ], 
+            ]
+        }, 
         "instanceTypeMap": {
             "Standard_A3": {
                 "storageAccountTier": "Standard", 
@@ -958,7 +922,7 @@
                     "vmSize": "[parameters('instanceType')]"
                 }, 
                 "networkProfile": {
-                    "networkInterfaces": "[concat(take(variables('selfNicConfigArray'), 3), take(variables('addtlNicConfigArray'), parameters('numberOfAdditionalNics')))]"
+                    "networkInterfaces": "[concat(take(variables('selfNicConfigArray'), 3), take(variables('addtlNicConfigArray').values, parameters('numberOfAdditionalNics')))]"
                 }, 
                 "osProfile": {
                     "adminPassword": "[parameters('adminPassword')]", 
