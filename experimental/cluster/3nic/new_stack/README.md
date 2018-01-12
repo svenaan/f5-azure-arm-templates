@@ -28,7 +28,9 @@ When using all-protocol load balancing, you can configure the next hop on Azure 
 
 When using per-protocol load balancing, deploy a network virtual server on BIG-IP VE with a destination address that matches the secondary private IP addresses of the ILB load balancing rule's backend pool members.  Note: The all-protocol ILB is currently only available in preview; you must sign up through Microsoft to enable this functionality before deploying the template. 
 
-The BIG-IP VEs have the [Local Traffic Manager (LTM)](https://f5.com/products/big-ip/local-traffic-manager-ltm) module enabled to provide advanced traffic management functionality. This means you can also configure the BIG-IP VE to enable F5's L4/L7 security features, access control, and intelligent traffic management.
+The BIG-IP VEs have the [Local Traffic Manager (LTM)](https://f5.com/products/big-ip/local-traffic-manager-ltm) module enabled to provide advanced traffic management functionality. This means you can also configure the BIG-IP VE to enable F5's L4/L7 security features, access control, and intelligent traffic management. 
+
+For diagrams of alternate deployment topologies, see [cluster 3 NIC alternate topologies](https://github.com/F5Networks/f5-azure-arm-templates/blob/master/supported/cluster/3nic/alternate-deployment-topologies.md).
 
 For information on getting started using F5's ARM templates on GitHub, see [Microsoft Azure: Solutions 101](http://clouddocs.f5.com/cloud/public/v1/azure/Azure_solutions101.html).
 
@@ -152,7 +154,7 @@ As an alternative to deploying through the Azure Portal (GUI) each solution prov
 
 ## Configuration Example <a name="config">
 
-The following is an example configuration diagram for this solution deployment. In this scenario, all access to the BIG-IP VE cluster (Active/Active) is through an ALB. The IP addresses in this example may be different in your implementation.
+The following is an example configuration diagram for this solution deployment. In this scenario, all access to the BIG-IP VE cluster (Active/Active) is through an ALB. For diagrams of alternate deployment topologies, see [cluster 3 NIC alternate topologies](https://github.com/F5Networks/f5-azure-arm-templates/blob/master/supported/cluster/3nic/alternate-deployment-topologies.md).
 
 ![Configuration Example](images/azure-example-diagram.png)
 
