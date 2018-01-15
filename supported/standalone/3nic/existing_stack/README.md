@@ -251,6 +251,7 @@ Note that even if the F5 ARM template is F5 Supported, this iApp template is sti
 We recommend you watch the [Viewing ASM Data in Azure Analytics video](https://www.youtube.com/watch?v=X3B_TOG5ZpA&feature=youtu.be) that shows this iApp in action, everything from downloading and importing the iApp, to configuring it, to a demo of an attack on an application and the resulting ASM violation log that is sent to ASM Analytics.
 
 **Important**: Be aware that this may (depending on the level of logging required) affect performance of the BIG-IP as a result of the processing to construct and send the log messages over HTTP to the cloud analytics solution.  
+It is also important to note this cloud logging iApp template is a *different solution and iApp template* than the F5 Analytics iApp template (https://f5.com/solutions/deployment-guides/analytics-big-ip-v114-v1212-ltm-apm-aam-asm-afm).  
 
 Use the following guidance for downloading and importing the iApp template.
   1. From a web browser, go to https://github.com/F5Networks/f5-cloud-iapps/tree/master/f5-cloud-logger.
