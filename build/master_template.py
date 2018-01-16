@@ -50,6 +50,9 @@ default_big_ip_version = '13.0.0300'
 allowed_big_ip_versions = ["13.0.0300", "12.1.2200", "latest"]
 version_port_map = {"latest": {"Port": 8443}, "13.0.0300": {"Port": 8443}, "12.1.2200": {"Port": 443}, "443": {"Port": 443}}
 route_cmd_array = {"latest": "route", "13.0.0300": "route", "12.1.2200": "[concat('route add 168.63.129.16 gw ', variables('mgmtRouteGw'), ' eth0')]"}
+network_mtu_array = {"12.1.2200": "[concat('tmsh modify net vlan internal mtu 1400; RUN_NETWORK=0')]", 
+    "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1')]", 
+    "latest": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1')]" }
 
 install_cloud_libs = """[concat(variables('singleQuote'), '#!/bin/bash\necho about to execute\nchecks=0\nwhile [ $checks -lt 120 ]; do echo checking mcpd\n/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running\nif [ $? == 0 ]; then\necho mcpd ready\nbreak\nfi\necho mcpd not ready yet\nlet checks=checks+1\nsleep 1\ndone\necho loading verifyHash script\n/usr/bin/tmsh load sys config merge file /config/verifyHash\nif [ $? != 0 ]; then\necho cannot validate signature of /config/verifyHash\nexit 1\nfi\necho loaded verifyHash\n\nconfig_loc="/config/cloud/"\nhashed_file_list="<HASHED_FILE_LIST>"\nfor file in $hashed_file_list; do\necho "verifying $file"\n/usr/bin/tmsh run cli script verifyHash $file\nif [ $? != 0 ]; then\necho "$file is not valid"\nexit 1\nfi\necho "verified $file"\ndone\necho "expanding $hashed_file_list"\ntar xfz /config/cloud/f5-cloud-libs.tar.gz -C /config/cloud/azure/node_modules\n<TAR_LIST>touch /config/cloud/cloudLibsReady', variables('singleQuote'))]"""
 
@@ -452,6 +455,8 @@ if template_name in ('standalone_1nic', 'standalone_2nic', 'standalone_3nic', 's
         if template_name in ('cluster_3nic'):
             data['variables']['backEndAddressPoolArray'] = lb_back_end_array
 
+if template_name in ('standalone_1nic'):
+    data['variables']['networkMtuArray'] = network_mtu_array
 if template_name in ('standalone_n-nic'):
     data['variables']['addtlNicFillerArray'] = ["filler01", "filler02", "filler03", "filler04", "filler05"]
     data['variables']['addtlNicRefSplit'] = "[concat(split(parameters('additionalNicLocation'), ';'), variables('addtlNicFillerArray'))]"
@@ -747,11 +752,11 @@ command_to_execute = command_to_execute.replace('<BIGIQ_PWD_CMD>', big_iq_pwd_cm
 command_to_execute2 = command_to_execute2.replace('<BIGIQ_PWD_CMD>', big_iq_pwd_cmd)
 
 # Change MTU to 1400 for 1 NIC
-mtu_cmd = "'tmsh modify sys global-settings mgmt-dhcp disabled; tmsh modify net vlan internal mtu 1400; ', "
+mtu_cmd = "variables('networkMtuArray')[parameters('bigIpVersion')], '; ',"
 if stack_type in ('existing_stack', 'prod_stack'):
-    mtu_post_cmd = "/usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', concat(take(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, add(lastIndexOf(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.'), 1)), add(int(take(split(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.')[3], indexOf(split(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.')[3], '/'))), 1)), ' --self-ip name:self_1nic,address:', variables('mgmtSubnetPrivateAddress'), skip(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, indexOf(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '/')), ',vlan:internal --log-level debug'"
+    mtu_post_cmd = "if [[ $RUN_NETWORK == 1 ]]; then /usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', concat(take(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, add(lastIndexOf(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.'), 1)), add(int(take(split(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.')[3], indexOf(split(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '.')[3], '/'))), 1)), ' --self-ip name:self_1nic,address:', variables('mgmtSubnetPrivateAddress'), skip(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, indexOf(reference(variables('mgmtSubnetRef'), variables('networkApiVersion')).addressPrefix, '/')), ',vlan:internal --log-level debug; fi'"
 else:
-    mtu_post_cmd = "/usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('mgmtRouteGw'), ' --self-ip name:self_1nic,address:', variables('mgmtSubnetPrivateAddress'),  ',vlan:internal --log-level debug'"
+    mtu_post_cmd = "if [[ $RUN_NETWORK == 1 ]]; then /usr/bin/f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/scripts/network.js --output /var/log/network.log --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('mgmtRouteGw'), ' --self-ip name:self_1nic,address:', variables('mgmtSubnetPrivateAddress'),  ',vlan:internal --log-level debug; fi'"
 command_to_execute = command_to_execute.replace('<MTU_CMD>', mtu_cmd).replace('<MTU_POST_CMD>', mtu_post_cmd)
 command_to_execute2 = command_to_execute2.replace('<MTU_CMD>', mtu_cmd).replace('<MTU_POST_CMD>', mtu_post_cmd)
 
