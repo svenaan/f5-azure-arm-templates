@@ -37,6 +37,7 @@ For information on getting started using F5's ARM templates on GitHub, see [Micr
   - If you are deploying the BYOL template, you must have a valid BIG-IP license token.
   - This template requires service principal.  See the [Service Principal Setup section](#service-principal-authentication) for details. Note: The service principal must have at least Contributor role access to the external network interfaces of both BIG-IP VEs, as well as to all route tables to be modified.
   - To have the UDRs managed by BIG-IP, you must configure it with an Azure tag with key **f5_tg** and value **traffic-group-1**, or the name of a different traffic group you have configured on the BIG-IP VE.
+  - You must allow Azure API calls over port **443**.
 
 ## Important configuration notes
   - See the **[Configuration Example](#config)** section for a configuration diagram and description for this solution.

@@ -73,6 +73,7 @@ templates:
     prereq_list:
       - service_principal: 'This template requires service principal.  See the [Service Principal Setup section](#service-principal-authentication) for details. Note: The service principal must have at least Contributor role access to the external network interfaces of both BIG-IP VEs, as well as to all route tables to be modified.'
       - udr_tags
+      - ha_api
     config_note_list:
       - post_config
       - rg_limit
@@ -139,8 +140,10 @@ note_text:
   scaling_note: 'For important information on choosing a metric on which to base autoscaling events and the thresholds used by the template, see [Scaling Thresholds](#scaling-thresholds).'
   storage_account: 'This template creates separate Azure storage accounts for each BIG-IP device that is a part of this deployment.'
   ha_failover: 'When configuring the template, you have the option of selecting 0 (zero) public IP addresses.  If you select 0 public IP addresses, the BIG-IP systems **will not** create any additional IP configurations on the Azure network interfaces; however, failover of UDR next hop is still supported.  If you require failover for your IP configurations, each IP configuration must be assigned a correctly tagged public IP address.'
-  bigiq_note: 'If you are using the Licensing using BIG-IQ template only: This solution only supports only BIG-IQ versions 5.0 - 5.3.
-'
+  bigiq_note: 'If you are using the Licensing using BIG-IQ template only: This solution only supports only BIG-IQ versions 5.0 - 5.3.'
+  ha_api: 'You must allow Azure API calls over port **443**.'
+
+
 help_text:
   supported: 'Because this template has been created and fully tested by F5 Networks, it is fully supported by F5. This means you can get assistance if necessary from [F5 Technical Support](https://support.f5.com/csp/article/K40701984).'
   experimental: 'While this template has been created by F5 Networks, it is in the **experimental** directory and therefore has not completed full testing and is subject to change.  F5 Networks does not offer technical support for templates in the experimental directory. For supported templates, see the templates in the **supported** directory.'

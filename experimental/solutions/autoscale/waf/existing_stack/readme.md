@@ -32,7 +32,7 @@ For information on getting started using F5's ARM templates on GitHub, see [Micr
   - **Important**: When you configure the admin password for the BIG-IP VE in the template, you cannot use the character **#**.  Additionally, there are a number of other special characters that you should avoid using for F5 product user accounts.  See https://support.f5.com/csp/article/K2873 for details.
   - If you are deploying the BYOL template, you must have a valid BIG-IP license token.
   - This template requires service principal.  See the [Service Principal Setup section](#service-principal-authentication) for details.
-  - If you are using the Licensing using BIG-IQ template only: This solution only supports only BIG-IQ versions 5.0 - 5.3. 
+  - If you are using the Licensing using BIG-IQ template only: This solution only supports only BIG-IQ versions 5.0 - 5.3.
 
 ## Important configuration notes
   - See the **[Configuration Example](#config)** section for a configuration diagram and description for this solution.
