@@ -252,7 +252,7 @@
         "mgmtRouteGw": "[concat(parameters('vnetAddressPrefix'), '.1.1')]", 
         "networkMtuArray": {
             "12.1.2200": "[concat('tmsh modify net vlan internal mtu 1400; RUN_NETWORK=0; EXT_ROUTE=\"\"')]", 
-            "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]", 
+            "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]", 
             "13.1.x": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]", 
             "latest": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]"
         }, 
