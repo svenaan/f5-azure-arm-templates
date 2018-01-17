@@ -96,6 +96,7 @@
         }, 
         "bigIpVersion": {
             "allowedValues": [
+                "13.1.x", 
                 "13.0.0300", 
                 "12.1.2200", 
                 "latest"
@@ -310,6 +311,9 @@
             "13.0.0300": {
                 "Port": 8443
             }, 
+            "13.1.x": {
+                "Port": 8443
+            }, 
             "443": {
                 "Port": 443
             }, 
@@ -390,6 +394,7 @@
         "routeCmdArray": {
             "12.1.2200": "[concat('route add 168.63.129.16 gw ', variables('mgmtRouteGw'), ' eth0')]", 
             "13.0.0300": "route", 
+            "13.1.x": "route", 
             "latest": "route"
         }, 
         "instanceTypeMap": {
