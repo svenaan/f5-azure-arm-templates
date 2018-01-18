@@ -159,6 +159,7 @@ license_text:
   PAYG: ': This allows you to use pay-as-you-go hourly billing.'
   BIG-IQ: ': This allows you to launch the template using an existing BIG-IQ device with a pool of licenses to license the BIG-IP VE(s).'
 license_map:
+  13.1.0200: '13.1.0 Build'
   13.0.0300: '13.0.0 HF3 Build 3.0.1679'
   12.1.2200: '12.1.2 HF2 Build 2.0.276'
   latest: 'This will select the latest BIG-IP version available'
