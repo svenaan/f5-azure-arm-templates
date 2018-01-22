@@ -51,7 +51,7 @@ allowed_big_ip_versions = ["13.1.0200", "13.0.0300", "12.1.2200", "latest"]
 version_port_map = {"latest": {"Port": 8443}, "13.1.0200": {"Port": 8443}, "13.0.0300": {"Port": 8443}, "12.1.2200": {"Port": 443}, "443": {"Port": 443}}
 route_cmd_array = {"latest": "route", "13.1.0200": "route", "13.0.0300": "route", "12.1.2200": "[concat('route add 168.63.129.16 gw ', variables('mgmtRouteGw'), ' eth0')]"}
 network_mtu_array = {"12.1.2200": "[concat('tmsh modify net vlan internal mtu 1400; RUN_NETWORK=0; EXT_ROUTE=\"\"')]",
-    "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]", 
+    "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]",
     "13.1.0200": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]",
     "latest": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]"
     }
@@ -119,7 +119,7 @@ if stack_type in ('existing_stack', 'prod_stack'):
 ## Determine PAYG/BYOL/BIGIQ variables
 image_to_use = "[parameters('bigIpVersion')]"
 sku_to_use = "[concat('f5-bigip-virtual-edition-', variables('imageNameToLower'),'-byol')]"
-offer_to_use = "f5-big-ip"
+offer_to_use = "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip', concat('f5-big-ip-', variables('imageNameToLower')))]"
 license1_command = ''
 license2_command = ''
 big_iq_pwd_cmd = ''
@@ -129,7 +129,7 @@ if license_type == 'BYOL':
     license2_command = "' --license ', parameters('licenseKey2'),"
 elif license_type == 'PAYG':
     sku_to_use = "[concat('f5-bigip-virtual-edition-', parameters('licensedBandwidth'), '-', variables('imageNameToLower'),'-hourly')]"
-    offer_to_use = "f5-big-ip-hourly"
+    offer_to_use = "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip-hourly', concat('f5-big-ip-', variables('imageNameToLower')))]"
 elif license_type == 'BIGIQ':
     big_iq_mgmt_ip_ref = ''
     big_iq_mgmt_ip_ref2 = ''
