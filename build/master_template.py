@@ -119,7 +119,7 @@ if stack_type in ('existing_stack', 'prod_stack'):
 ## Determine PAYG/BYOL/BIGIQ variables
 image_to_use = "[parameters('bigIpVersion')]"
 sku_to_use = "[concat('f5-bigip-virtual-edition-', variables('imageNameToLower'),'-byol')]"
-offer_to_use = "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip', concat('f5-big-ip-', variables('imageNameToLower')))]"
+offer_to_use = "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip', concat('f5-big-ip-', variables('imageNameToLower'), '-preview'))]"
 license1_command = ''
 license2_command = ''
 big_iq_pwd_cmd = ''
@@ -129,7 +129,7 @@ if license_type == 'BYOL':
     license2_command = "' --license ', parameters('licenseKey2'),"
 elif license_type == 'PAYG':
     sku_to_use = "[concat('f5-bigip-virtual-edition-', parameters('licensedBandwidth'), '-', variables('imageNameToLower'),'-hourly')]"
-    offer_to_use = "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip-hourly', concat('f5-big-ip-', variables('imageNameToLower')))]"
+    offer_to_use = "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip-hourly', concat('f5-big-ip-', variables('imageNameToLower'), '-preview'))]"
 elif license_type == 'BIGIQ':
     big_iq_mgmt_ip_ref = ''
     big_iq_mgmt_ip_ref2 = ''
