@@ -42,6 +42,7 @@ This template differs from the *existing stack* template in that this template d
   - F5 has created an iApp (currently **Experimental**) for configuring logging for BIG-IP modules to be sent to a specific set of cloud analytics solutions.  See [Experimental Logging iApp](#experimental-logging-iapp).
   - F5 Azure ARM templates now capture all deployment logs to the BIG-IP VE in **/var/log/cloud/azure**.  Depending on which template you are using, this includes deployment logs (stdout/stderr), Cloud Libs execution logs, recurring solution logs (metrics, failover, and so on), and more. 
   - This template has some optional post-deployment configuration.  See the [Post-Deployment Configuration section](#post-deployment-configuration) for details.
+  - You have the option of using a [BIG-IQ device](https://f5.com/products/big-iq-centralized-management) with a pool of BIG-IP licenses in order to license BIG-IP VEs using BYOL licenses. This solution only supports only BIG-IQ versions 5.0 - 5.3, and your BIG-IQ system must have at least 2 NICs.
 
 
 ## Security
@@ -59,7 +60,7 @@ The following is a map that shows the available options for the template paramet
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 13.1.0200 | 13.1.0 Build |
+| 13.1.0200 | 13.1.0 Build 0.0.6 |
 | 13.0.0300 | 13.0.0 HF3 Build 3.0.1679 |
 | 12.1.2200 | 12.1.2 HF2 Build 2.0.276 |
 | latest | This will select the latest BIG-IP version available |
