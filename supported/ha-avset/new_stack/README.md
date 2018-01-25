@@ -55,6 +55,7 @@ For information on getting started using F5's ARM templates on GitHub, see [Micr
   - The BIG-IP VE failover log can be found at **/var/tmp/azureFailover.log**.
   - This template creates separate Azure storage accounts for each BIG-IP device that is a part of this deployment.
   - When configuring the template, you have the option of selecting 0 (zero) public IP addresses.  If you select 0 public IP addresses, the BIG-IP systems **will not** create any additional IP configurations on the Azure network interfaces; however, failover of UDR next hop is still supported.  If you require failover for your IP configurations, each IP configuration must be assigned a correctly tagged public IP address.
+  - You have the option of using a [BIG-IQ device](https://f5.com/products/big-iq-centralized-management) with a pool of BIG-IP licenses in order to license BIG-IP VEs using BYOL licenses. This solution only supports only BIG-IQ versions 5.0 - 5.3, and your BIG-IQ system must have at least 2 NICs.
 
 
 ## Security
@@ -72,7 +73,7 @@ The following is a map that shows the available options for the template paramet
 
 | Azure BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 13.1.0200 | 13.1.0 Build |
+| 13.1.0200 | 13.1.0 Build 0.0.6 |
 | 13.0.0300 | 13.0.0 HF3 Build 3.0.1679 |
 | 12.1.2200 | 12.1.2 HF2 Build 2.0.276 |
 | latest | This will select the latest BIG-IP version available |
