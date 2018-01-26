@@ -37,16 +37,21 @@ class ReadmeGen(object):
             yaml_value = "Please input a value."
         try:
             support_type = self.i_data['support_type']
-        except:
+        except KeyError:
             support_type = None
         if isinstance(yaml_value, dict):
-            if support_type in yaml_value: 
+            if support_type in yaml_value:
                 yaml_value = yaml_value[support_type]
-            elif template_name in yaml_value:
-                if isinstance(yaml_value[template_name], dict) and support_type in yaml_value[template_name]: 
-                    yaml_value = yaml_value[template_name][support_type]
+            elif 'template_name' in yaml_value:
+                yvalue = yaml_value['template_name']
+                if template_name in yvalue:
+                    yvalue_tmpl = yvalue[template_name]
+                    if isinstance(yvalue_tmpl, dict) and support_type in yvalue_tmpl:
+                        yaml_value = yvalue_tmpl[support_type]
+                    else:
+                        yaml_value = yvalue_tmpl
                 else:
-                    yaml_value = yaml_value[template_name]
+                    yaml_value = yaml_value['default']
             else:
                 yaml_value = yaml_value['default']
         return yaml_value
@@ -98,7 +103,7 @@ class ReadmeGen(object):
         return False
 
     def md_param_array(self):
-        """ Create README example paramaters: | adminUsername | Yes | Description | """
+        """ Create README example parameters: | adminUsername | Yes | Description | """
         template_name = self.i_data['template_info']['template_name']
         license_params = self.i_data['license_params']
         lic_type = self.i_data['readme_text']['deploy_links']['lic_support'][template_name]
