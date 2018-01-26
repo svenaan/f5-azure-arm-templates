@@ -1,14 +1,6 @@
 # YAML Document that includes the custom text for each solution readme
-## NOTE 1: YAML single quotes in single quoted strings are escaped by including an extra quote, so NIC's becomes NIC''s
-## NOTE 2: If separation is needed between supported and experimental templates then add a child key for 'supported' and 'experimental'
-##   standalone_1nic:
-##     supported: 'Single NIC'
-##     experimental: 'Experimental Single NIC'
-## NOTE 3: If separation is needed between templates then add a child key of 'default' as the catch all and a child key for each unique template
-##   parameter_list:
-##     adminUsername: 'Single NIC'
-##      default: 'adminUsername Help Text'
-##      standalon_1nic: 'adminUsername Experimental Help Text'
+## NOTE: YAML single quotes in single quoted strings are escaped by including an extra quote, so NIC's becomes NIC''s
+
 
 ######################### Define each template here #########################
 templates:
@@ -148,7 +140,11 @@ note_text:
   scaling_note: 'For important information on choosing a metric on which to base autoscaling events and the thresholds used by the template, see [Scaling Thresholds](#scaling-thresholds).'
   storage_account: 'This template creates separate Azure storage accounts for each BIG-IP device that is a part of this deployment.'
   ha_failover: 'When configuring the template, you have the option of selecting 0 (zero) public IP addresses.  If you select 0 public IP addresses, the BIG-IP systems **will not** create any additional IP configurations on the Azure network interfaces; however, failover of UDR next hop is still supported.  If you require failover for your IP configurations, each IP configuration must be assigned a correctly tagged public IP address.'
-  bigiq_note: 'You have the option of using a [BIG-IQ device](https://f5.com/products/big-iq-centralized-management) with a pool of BIG-IP licenses in order to license BIG-IP VEs using BYOL licenses. This solution only supports only BIG-IQ versions 5.0 - 5.3, and your BIG-IQ system must have at least 2 NICs.'
+  bigiq_note:
+    default: 'You have the option of using a [BIG-IQ device](https://f5.com/products/big-iq-centralized-management) with a pool of BIG-IP licenses in order to license BIG-IP VEs using BYOL licenses. This solution only supports only BIG-IQ versions 5.0 - 5.3, and your BIG-IQ system must have at least 2 NICs.'
+    exclude:
+      stack_type:
+        - prod_stack
   ha_api: 'You must allow Azure API calls over port **443**.'
 
 

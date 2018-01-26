@@ -43,7 +43,6 @@ This template differs from the *existing stack* template in that this template d
   - F5 Azure ARM templates now capture all deployment logs to the BIG-IP VE in **/var/log/cloud/azure**.  Depending on which template you are using, this includes deployment logs (stdout/stderr), Cloud Libs execution logs, recurring solution logs (metrics, failover, and so on), and more. 
   - This template has some optional post-deployment configuration.  See the [Post-Deployment Configuration section](#post-deployment-configuration) for details.
   - As a result of this template deploying a variable number of NICs using the parameter **numberOfAdditionalNics**, it will preconfigure the BIG-IP VLAN(s) and place the interfaces into the corresponding VLAN (based on the subnet name(s) in **additionalNicLocation**).  Be aware that after the template deploys, the BIG-IP self IP address(es) need to be created that correspond to the Azure IP Config object for that NIC.  You must also set the IP Config object to a **static** address instead of *dynamic* to ensure it does not change on reboot.
-  - You have the option of using a [BIG-IQ device](https://f5.com/products/big-iq-centralized-management) with a pool of BIG-IP licenses in order to license BIG-IP VEs using BYOL licenses. This solution only supports only BIG-IQ versions 5.0 - 5.3, and your BIG-IQ system must have at least 2 NICs.
 
 
 ## Security
