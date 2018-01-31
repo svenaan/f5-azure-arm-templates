@@ -311,7 +311,7 @@
         "mgmtRouteGw": "[concat(parameters('vnetAddressPrefix'), '.1.1')]", 
         "tmmRouteGw": "[concat(parameters('vnetAddressPrefix'), '.2.1')]", 
         "routeCmdArray": {
-            "12.1.2200": "[concat('route add 168.63.129.16 gw ', variables('mgmtRouteGw'), ' eth0')]", 
+            "12.1.2200": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]", 
             "13.0.0300": "route", 
             "13.1.0200": "route", 
             "latest": "route"

@@ -49,7 +49,7 @@ f5_cloud_workers_tag = 'v1.0.0'
 default_big_ip_version = '13.0.0300'
 allowed_big_ip_versions = ["13.1.0200", "13.0.0300", "12.1.2200", "latest"]
 version_port_map = {"latest": {"Port": 8443}, "13.1.0200": {"Port": 8443}, "13.0.0300": {"Port": 8443}, "12.1.2200": {"Port": 443}, "443": {"Port": 443}}
-route_cmd_array = {"latest": "route", "13.1.0200": "route", "13.0.0300": "route", "12.1.2200": "[concat('route add 168.63.129.16 gw ', variables('mgmtRouteGw'), ' eth0')]"}
+route_cmd_array = {"latest": "route", "13.1.0200": "route", "13.0.0300": "route", "12.1.2200": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]"}
 network_mtu_array = {"12.1.2200": "[concat('tmsh modify net vlan internal mtu 1400; RUN_NETWORK=0; EXT_ROUTE=\"\"')]",
     "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]",
     "13.1.0200": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]",
