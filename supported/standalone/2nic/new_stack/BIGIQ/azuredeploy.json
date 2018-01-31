@@ -106,11 +106,11 @@
         "bigIpVersion": {
             "allowedValues": [
                 "13.1.0200", 
-                "13.0.0300", 
-                "12.1.2200", 
+                "13.0.03118", 
+                "12.1.22193", 
                 "latest"
             ], 
-            "defaultValue": "13.0.0300", 
+            "defaultValue": "13.0.03118", 
             "metadata": {
                 "description": "F5 BIG-IP version you want to use."
             }, 
@@ -245,10 +245,10 @@
             }
         }, 
         "bigIpVersionPortMap": {
-            "12.1.2200": {
+            "12.1.22193": {
                 "Port": 443
             }, 
-            "13.0.0300": {
+            "13.0.03118": {
                 "Port": 8443
             }, 
             "13.1.0200": {
@@ -278,7 +278,7 @@
         "dnsLabel": "[toLower(parameters('dnsLabel'))]", 
         "imageNameToLower": "[toLower(parameters('imageName'))]", 
         "skuToUse": "[concat('f5-bigip-virtual-edition-', variables('imageNameToLower'),'-byol')]", 
-        "offerToUse": "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip', concat('f5-big-ip-', variables('imageNameToLower'), '-preview'))]", 
+        "offerToUse": "[if(or(equals(parameters('bigIpVersion'), '12.1.22193'), equals(parameters('bigIpVersion'), '13.0.03118')), 'f5-big-ip-adc-preview', concat('f5-big-ip-', variables('imageNameToLower'), '-preview'))]", 
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['2'].Port]", 
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]", 
         "instanceName": "[toLower(parameters('instanceName'))]", 
@@ -311,8 +311,8 @@
         "mgmtRouteGw": "[concat(parameters('vnetAddressPrefix'), '.1.1')]", 
         "tmmRouteGw": "[concat(parameters('vnetAddressPrefix'), '.2.1')]", 
         "routeCmdArray": {
-            "12.1.2200": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]", 
-            "13.0.0300": "route", 
+            "12.1.22193": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]", 
+            "13.0.03118": "route", 
             "13.1.0200": "route", 
             "latest": "route"
         }, 

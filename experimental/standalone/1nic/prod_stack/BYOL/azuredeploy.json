@@ -106,11 +106,11 @@
         "bigIpVersion": {
             "allowedValues": [
                 "13.1.0200", 
-                "13.0.0300", 
-                "12.1.2200", 
+                "13.0.03118", 
+                "12.1.22193", 
                 "latest"
             ], 
-            "defaultValue": "13.0.0300", 
+            "defaultValue": "13.0.03118", 
             "metadata": {
                 "description": "F5 BIG-IP version you want to use."
             }, 
@@ -222,10 +222,10 @@
             }
         }, 
         "bigIpVersionPortMap": {
-            "12.1.2200": {
+            "12.1.22193": {
                 "Port": 443
             }, 
-            "13.0.0300": {
+            "13.0.03118": {
                 "Port": 8443
             }, 
             "13.1.0200": {
@@ -255,7 +255,7 @@
         "dnsLabel": "[toLower(parameters('uniqueLabel'))]", 
         "imageNameToLower": "[toLower(parameters('imageName'))]", 
         "skuToUse": "[concat('f5-bigip-virtual-edition-', variables('imageNameToLower'),'-byol')]", 
-        "offerToUse": "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip', concat('f5-big-ip-', variables('imageNameToLower'), '-preview'))]", 
+        "offerToUse": "[if(or(equals(parameters('bigIpVersion'), '12.1.22193'), equals(parameters('bigIpVersion'), '13.0.03118')), 'f5-big-ip-adc-preview', concat('f5-big-ip-', variables('imageNameToLower'), '-preview'))]", 
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['1'].Port]", 
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]", 
         "instanceName": "[toLower(parameters('instanceName'))]", 
@@ -275,8 +275,8 @@
         "mgmtSubnetRef": "[concat('/subscriptions/', variables('subscriptionID'), '/resourceGroups/', parameters('vnetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('mgmtSubnetName'))]", 
         "mgmtRouteGw": "`tmsh list sys management-route default gateway | grep gateway | sed 's/gateway //;s/ //g'`", 
         "networkMtuArray": {
-            "12.1.2200": "[concat('tmsh modify net vlan internal mtu 1400; RUN_NETWORK=0; EXT_ROUTE=\"\"')]", 
-            "13.0.0300": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]", 
+            "12.1.22193": "[concat('tmsh modify net vlan internal mtu 1400; RUN_NETWORK=0; EXT_ROUTE=\"\"')]", 
+            "13.0.03118": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; tmsh modify net vlan internal mtu 1400; RUN_NETWORK=1; EXT_ROUTE=\"\"')]", 
             "13.1.0200": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]", 
             "latest": "[concat('tmsh modify sys global-settings mgmt-dhcp disabled; tmsh save sys config; RUN_NETWORK=1; EXT_ROUTE=\"--route name:ext_route,gw:', variables('mgmtRouteGw'), ',network:168.63.129.16/32\"')]"
         }, 

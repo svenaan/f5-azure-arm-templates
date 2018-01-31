@@ -21,7 +21,7 @@
             "value": "Good"
         }, 
         "bigIpVersion": {
-            "value": "13.0.0300"
+            "value": "13.0.03118"
         }, 
         "bigIqLicenseHost": {
             "value": "GEN_UNIQUE"
