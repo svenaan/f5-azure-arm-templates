@@ -34,7 +34,7 @@ class ReadmeGen(object):
         try:
             yaml_value = yaml_dict[parent_key][child_key]
         except KeyError:
-            yaml_value = "Please input a value."
+            yaml_value = "No Value"
         try:
             support_type = self.i_data['support_type']
         except KeyError:
