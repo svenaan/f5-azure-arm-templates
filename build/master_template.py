@@ -106,6 +106,12 @@ if template_name in ('standalone_3nic', 'standalone_n-nic', 'ha-avset', 'cluster
 for instance in disallowed_instance_list:
     instance_type_list.remove(instance)
 
+## Determine if learning stack and set flags ##
+learning_stack = False
+if stack_type in ('learning_stack'):
+    learning_stack = True
+    stack_type = 'new_stack'
+    
 ## Set stack mask commands ##
 ext_mask_cmd = ''
 int_mask_cmd = ''
