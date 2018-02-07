@@ -93,6 +93,7 @@ templates:
     config_ex_text: 'In this scenario, all access to the BIG-IP VE appliance is through an Azure Load Balancer. The Azure Load Balancer processes both management and data plane traffic into the BIG-IP VEs, which then distribute the traffic to web/application servers according to normal F5 patterns.'
     prereq_list:
       - service_principal
+      - ha_api
     config_note_list:
       - master_election
       - post_config
@@ -110,6 +111,7 @@ templates:
     config_ex_text: 'In this scenario, all access to the BIG-IP VE appliance is through an Azure Load Balancer. The Azure Load Balancer processes both management and data plane traffic into the BIG-IP VEs, which then distribute the traffic to web/application servers according to normal F5 patterns.'
     prereq_list:
       - service_principal
+      - ha_api
     config_note_list:
       - master_election
       - post_config
@@ -145,7 +147,7 @@ note_text:
     exclude:
       stack_type:
         - prod_stack
-  ha_api: 'You must allow Azure API calls over port **443**.'
+  ha_api: 'This solution uses calls to the Azure REST API to read and update Azure resources such as storage accounts, network interfaces, and route tables.  For the solution to function correctly, you must ensure that the BIG-IP(s) can connect to the Azure REST API on port 443.'
 
 
 help_text:
