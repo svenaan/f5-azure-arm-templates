@@ -68,6 +68,10 @@ for tmpl in $template_list; do
     if [[ $tmpl == *"ha-avset"* ]] || [[ $tmpl == *"cluster_3nic"* ]]; then
         stack_list="new_stack existing_stack"
     fi
+    # Build learning_stack for certain templates
+    if [[ $tmpl == *"standalone_3nic"* ]]; then
+        stack_list+=" learning_stack"
+    fi
     for stack_type in $stack_list; do
         python -B '.\master_template.py' --template-name $tmpl --license-type PAYG --stack-type $stack_type --template-location "../experimental/$loc/$stack_type/PAYG/" --script-location "../experimental/$loc/$stack_type/" $release_prep
         python -B '.\master_template.py' --template-name $tmpl --license-type BYOL --stack-type $stack_type --template-location "../experimental/$loc/$stack_type/BYOL/" --script-location "../experimental/$loc/$stack_type/" $release_prep

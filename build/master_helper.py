@@ -234,6 +234,10 @@ def variable_initialize(data):
     data['variables']['dataStorageAccountType'] = "Standard_LRS"
     data['variables']['deploymentId'] = "MANDATORY"
     data['variables']['allowUsageAnalytics'] = "MANDATORY"
+    data['variables']['webVmName'] = "OPTIONAL"
+    data['variables']['webVmSubnetPrivateAddress'] = "OPTIONAL"
+    data['variables']['webVmVsAddr'] = "OPTIONAL"
+    data['variables']['webVmVsPort'] = "OPTIONAL"
     data['variables']['customConfig'] = "### START (INPUT) CUSTOM CONFIGURATION HERE\n"
     data['variables']['installCustomConfig'] = "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]"
 
