@@ -110,7 +110,7 @@
                 "12.1.2200", 
                 "latest"
             ], 
-            "defaultValue": "13.0.0300", 
+            "defaultValue": "13.1.0200", 
             "metadata": {
                 "description": "F5 BIG-IP version you want to use."
             }, 

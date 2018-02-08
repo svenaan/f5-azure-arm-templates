@@ -42,7 +42,7 @@
             "value": "Best"
         }, 
         "bigIpVersion": {
-            "value": "13.0.0300"
+            "value": "13.1.0200"
         }, 
         "licensedBandwidth": {
             "value": "200m"

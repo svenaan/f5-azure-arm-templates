@@ -46,7 +46,7 @@ f5_cloud_libs_azure_tag = 'v1.5.0'
 f5_cloud_iapps_tag = 'v1.2.1'
 f5_cloud_workers_tag = 'v1.0.0'
 # Set BIG-IP versions to allow
-default_big_ip_version = '13.0.0300'
+default_big_ip_version = '13.1.0200'
 allowed_big_ip_versions = ["13.1.0200", "13.0.0300", "12.1.2200", "latest"]
 version_port_map = {"latest": {"Port": 8443}, "13.1.0200": {"Port": 8443}, "13.0.0300": {"Port": 8443}, "12.1.2200": {"Port": 443}, "443": {"Port": 443}}
 route_cmd_array = {"latest": "route", "13.1.0200": "route", "13.0.0300": "route", "12.1.2200": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]"}
