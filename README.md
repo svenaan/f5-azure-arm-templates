@@ -226,7 +226,7 @@ Note that many of the solutions now include *Production Stack* templates.  This 
 
 ### Copyright
 
-Copyright 2014-2017 F5 Networks Inc.
+Copyright 2014-2018 F5 Networks Inc.
 
 
 ### License
