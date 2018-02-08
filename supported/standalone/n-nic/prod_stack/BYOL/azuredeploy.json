@@ -311,7 +311,7 @@
         "subscriptionID": "[subscription().subscriptionId]", 
         "resourceGroupName": "[resourceGroup().name]", 
         "singleQuote": "'", 
-        "f5CloudLibsTag": "release-3.6.2", 
+        "f5CloudLibsTag": "v3.6.2", 
         "f5CloudLibsAzureTag": "v1.5.0", 
         "f5NetworksTag": "release-4.4.0.0", 
         "f5CloudIappsTag": "v1.2.1", 
