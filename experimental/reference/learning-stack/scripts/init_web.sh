@@ -9,9 +9,8 @@ apt-get -y install apache2
 # Download and modify example HTML
 if [ -z "$1" ]; then branch="master"; else branch="$1"; fi
 curl -fk --retry 5 --retry-delay 10 --retry-max-time 10 https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates/$branch/experimental/reference/learning-stack/html/default.html > /var/www/html/index.html
-curl -fk --retry 5 --retry-delay 10 --retry-max-time 10
 # Download Image
-https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates/$branch/experimental/reference/learning-stack/images/f5_favicon.ico > /var/www/html/favicon.ico
+curl -fk --retry 5 --retry-delay 10 --retry-max-time 10 https://raw.githubusercontent.com/F5Networks/f5-azure-arm-templates/$branch/experimental/reference/learning-stack/images/f5_favicon.ico > /var/www/html/favicon.ico
 # Replace values in file as needed
 webserver=`hostname`
 sed -i "s/(hostname)/($webserver)/g" /var/www/html/index.html
